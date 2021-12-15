@@ -3,6 +3,7 @@
 # pylint: disable=line-too-long
 
 import json
+import os
 import pytest
 from client.container import Container
 
@@ -14,13 +15,13 @@ class MockContainer():
     def reload():
         return None
 
+current_path = os.getcwd()
 
 @pytest.fixture
 def mock_container():
-    with open('tests\\client_container_attribute_sample.json', encoding='utf-8') as stream:
+    with open(os.path.join(current_path, 'tests\\client_container_attribute_sample.json'), encoding='utf-8') as stream:
         mock_container_object = MockContainer(json.load(stream))
         return Container(mock_container_object)
-
 
 def test_name_is_extracted_correctly(mock_container):
     assert mock_container.name == "fm-server"

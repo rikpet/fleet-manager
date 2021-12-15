@@ -6,7 +6,6 @@ The system consists of a client application, which can be installed at every dev
 The second application is a server application, which act as a centralized server for data gathering and user interaction. The server has a simple web application which enables an user to interact with the different devices and containers in the system. The servers enables an user to send command to the different client and can through the web application, for example, update a container to the latest image available
 
 ## Install
---------------
 Both application are compatible with docker containers. 
 
 ### Server
@@ -36,7 +35,6 @@ make run-client
 ```
 
 ## Development
--------------------
 Code follows ``pylint``. Docstrings follow ``Google Python style`` guide docstring format. 
 
 To develop and test this library, install the python dev requirements:
