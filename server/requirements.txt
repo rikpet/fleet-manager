@@ -1,0 +1,7 @@
+docker
+requests
+flask
+python-socketio
+python-engineio==4.2.1
+Flask-SocketIO==5.1.1
+git+https://github.com/rikpet/distributed_logger.git

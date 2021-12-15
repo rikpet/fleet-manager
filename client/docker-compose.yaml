@@ -1,0 +1,12 @@
+version: '3.9'
+services:
+  fm-client:
+    privileged: true
+    image: rikpet/easy-living:fm-client-beta
+    container_name: fm-client
+    ports:
+      - 5011:5000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      FLASK_ENV: development

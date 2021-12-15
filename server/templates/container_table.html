@@ -1,0 +1,49 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th>Installed at</th>
+            <th>Container name</th>
+            <th>Container status</th>
+            <th>Image name</th>
+            <th>Image status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for device in fleet.values() %}
+            {% for container in device["containers"] %}
+                <tr>
+                    <td>
+                        <div class="device-info">
+                            <div>
+                                <h5 class="mb-0">{{ device["name"] }}</h5>
+                                <p class="text-muted mb-0">{{ device["ip_address"] }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ container["name"] }}</td>
+                    <td>
+                        <span id="container-status-indicator-{{container['id']}}" class="active-circle bg-success"></span>
+                        <span id="container-status-text-{{container['id']}}">running</span>
+                    </td>
+                    <td>{{container["image_name"] }}</td>
+                    <td>
+                        <span id="container-update-status-{{container['id']}}" class="badge bg-success">Up to date</span>
+                    </td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn shadow-none" type="button" id="triggerId1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="triggerId1">
+                                <li onclick="update_container('{{device['id']}}', '{{container['name']}}')"><a class="dropdown-item" href="#"><i class="fa fa-refresh pe-2"></i>Update</a></li>
+                                <li onclick="start_container('{{device['id']}}', '{{container['name']}}')"><a class="dropdown-item" href="#"><i class="fa fa-play pe-2"></i>Start</a></li>
+                                <li onclick="stop_container('{{device['id']}}', '{{container['name']}}')"><a class="dropdown-item" href="#"><i class="fa fa-stop pe-2"></i>Stop</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
