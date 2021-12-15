@@ -15,11 +15,11 @@ class MockContainer():
     def reload():
         return None
 
-current_path = os.getcwd()
+workdir_path = os.getenv("PATH_WORK_DIR", os.getcwd())
 
 @pytest.fixture
 def mock_container():
-    with open(os.path.join(current_path, 'tests\\client_container_attribute_sample.json'), encoding='utf-8') as stream:
+    with open(os.path.join(workdir_path, 'tests\\client_container_attribute_sample.json'), encoding='utf-8') as stream:
         mock_container_object = MockContainer(json.load(stream))
         return Container(mock_container_object)
 
