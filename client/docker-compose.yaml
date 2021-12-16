@@ -2,6 +2,7 @@ version: '3.9'
 services:
   fm-client:
     privileged: true
+    restart: always
     image: rikpet/easy-living:fm-client-beta
     container_name: fm-client
     ports:
@@ -9,4 +10,13 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      FLASK_ENV: development
+      - FLASK_ENV=development
+      - APPLICATION_NAME
+      - PUSH_INTERVAL
+      - DEVICE_NAME
+      - FM_SERVER_ADDRESS
+      - FM_SERVER_PORT
+      - ENABLE_LOG_SERVER
+      - LOG_SERVER_IP
+      - LOG_SERVER_PORT
+      - LOG_LEVEL

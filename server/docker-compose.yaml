@@ -2,6 +2,7 @@ version: '3.9'
 services:
   fm-server:
     privileged: true
+    restart: always
     image: rikpet/easy-living:fm-server-beta
     container_name: fm-server
     ports:
@@ -13,3 +14,8 @@ services:
       - DOCKER_HUB_USERNAME
       - DOCKER_HUB_PASSWORD
       - DOCKER_HUB_REPO
+      - APPLICATION_NAME
+      - ENABLE_LOG_SERVER
+      - LOG_SERVER_IP
+      - LOG_SERVER_PORT
+      - LOG_LEVEL

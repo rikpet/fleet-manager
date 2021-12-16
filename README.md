@@ -25,37 +25,70 @@ The Docker images is often available in two different version:
 - ``stable``: latest stable and tested version.
 
 ### Server
-*Docker image name: ``fl-server-[stable/beta]``*
+*Docker image name: ``fm-server-[stable/beta]``*
 
 The server application can either ran as a python application or inside a docker container. This tutorial will focus on running the application in a docker container on a raspberry pi.
 
-1. Install docker by running the following command:
+1. Install Docker by running the following command:
     ```bash 
     curl -sSL https://get.docker.com | sh
     ```
 
 2. Create an account on [Docker hub](https://hub.docker.com/). This is needed for the version control to work.
 
-3. There are four environment variables needed for the application to run. These can either be added when starting the container, but if you want to use the composer file these needs to be added before. 
+3. Set environment variables. Required environment variables must be set for the application to start
 
-    The enviroment variables needed are:
+    | Variable | Importance | Description |
+    |----------|------------|-------------|
+    | DOCKER_HUB_USERNAME | Required | Username for the Docker hub account |
+    | DOCKER_HUB_PASSWORD | Required | Password for the Docker hub account |
+    | DOCKER_HUB_REPO | Required | Docker hub repository where the images can be found. Should be ``rikpet/easy-living`` if the purpose is to use this repository, but this variable can be pointed towards another repo if wanted. Note that the docker hub account need access to the repository for this application to work as intended |
+    | APPLICATION_NAME | Optional | Application name, used in logger, defaults to ``fleet-manager-server`` |
+    | ENABLE_LOG_SERVER | Optional | Enable ``decentralized logger``, defaults to ``False`` |
+    | LOG_SERVER_IP | Optional | IP to ``decentralized logger``, defaults to ``127.0.0.1``
+    | LOG_SERVER_PORT | Optional | Port for ``decentralized logger``, defaults to ``9020`` |
+    | LOG_LEVEL | Optional | Logger level, defaults to ``DEBUG`` |
 
-    - **DOCKER_HUB_USERNAME** - Username for the Docker hub account
-    - **DOCKER_HUB_PASSWORD** - Password for the Docker hub account
-    - **DOCKER_HUB_REPO** - Docker hub repository where the images can be found. Should be ``rikpet/easy-living`` if the purpose is to use this repository, but this variable can be pointed towards another repo if wanted. Note that the docker hub account need access to the repository for this application to work as intended.
+4. Start the container. There are a ``docker-compose.yaml`` to help create the container. Download the composer file to the device, change which version to use (stable or beta) in the file and run:
+    ```bash
+    docker-compose --file docker-compose.yaml up -d
+    ```
+
+5. The application should now be running. Open a web browser on any device in the same network and go to:
+    ```bash
+    [ip_to_the_device]:5010
+    ```
+    If no device is registered the page will be empty, but as soon as a device is registered (through the device application) the UI will appear.
+
+### Client
+*Docker image name: ``fm-client-[stable/beta]``*
+
+The client application can either ran as a python application or inside a docker container. This tutorial will focus on running the application in a docker container on a raspberry pi.
+
+First follow step 1 and 2 from the server application tutorial.
+
+3. Set environment variables
+
+    | Variable | Importance | Description |
+    |----------|------------|-------------|
+    | PUSH_INTERVAL | Optional | Push interval for telemetry in seconds, defaults to ``60`` |
+    | DEVICE_NAME | Optional | Device name displayed in server UI, defaults to ``John Doe`` |
+    | FM_SERVER_ADDRESS | Optional | IP address to device running fleet manager server applciation, defaults to ``127.0.0.1`` |
+    | FM_SERVER_PORT | Optional | Port used by the fleet manager server application, defaults tp ``5010`` |
+    | APPLICATION_NAME | Optional | Application name, used in logger, defaults to ``fleet-manager-server`` |
+    | ENABLE_LOG_SERVER | Optional | Enable ``decentralized logger``, defaults to ``False`` |
+    | LOG_SERVER_IP | Optional | IP to ``decentralized logger``, defaults to ``127.0.0.1``
+    | LOG_SERVER_PORT | Optional | Port for ``decentralized logger``, defaults to ``9020`` |
+    | LOG_LEVEL | Optional | Logger level, defaults to ``DEBUG`` |
 
 4. Start the container. There are a ``docker-compose.yaml`` to help out creating the container. Download the composer file to the device, change which version to use (stable or beta) in the file and run:
     ```bash
     docker-compose --file docker-compose.yaml up -d
     ```
 
-5. The application should be running now. Open a web browser on any device in the same network and go to:
-    ```bash
-    [ip to the device]:5010
-    ```
-    If no device are registered the page will we empty but as soon as a device is registered (through the device application) the UI will appear.
+5. The application should now be running now. 
 
-### Client
+
 To build the docker image run:
 
 ```bash
@@ -77,16 +110,22 @@ To develop and test this library, install the python dev requirements:
 pip install -r dev_requirements.txt
 ```
 
-To build the docker image run:
+To build the docker image locally run:
 
 ```bash
-make build-server
+make build-[server/client]
 ```
 
-To start the container run:
+To start the container locally run:
 
 ```bash
-make run-server
+make run-[server/client]
+```
+
+The ``Makefile`` has more targets, to get more information and the entire list, run:
+
+```bash
+make help
 ```
 
 ### Windows
