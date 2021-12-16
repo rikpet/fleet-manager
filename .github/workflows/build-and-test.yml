@@ -22,5 +22,4 @@ jobs:
         pylint --fail-under=9.5 $(git ls-files '*.py')
     - name: Running tests
       run: |
-        ls tests
         pytest
