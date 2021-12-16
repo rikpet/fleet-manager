@@ -21,7 +21,7 @@ jobs:
       run: |
         pylint --fail-under=9.5 $(git ls-files '*.py')
     - name: Running tests
-      env: 
-        PATH_WORK_DIR: ${{ github.workspace }}
       run: |
+        ls
+        ls tests
         pytest

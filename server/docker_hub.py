@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from http import HTTPStatus
 import requests
 
-
 class Token(): # pylint: disable=too-few-public-methods
     """Token handler for docker hub authentication token"""
     BASE_URL = "https://%s:%s@auth.docker.io/token?service=registry.docker.io&scope=repository:%s:pull" # pylint: disable=line-too-long
