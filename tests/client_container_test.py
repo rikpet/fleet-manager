@@ -4,6 +4,7 @@
 
 import json
 import pytest
+import os
 from client.container import Container
 
 class MockContainer():
@@ -14,6 +15,7 @@ class MockContainer():
     def reload():
         return None
 
+print("trying to force change")
 @pytest.fixture
 def mock_container():
     with open('tests/client_container_attribute_sample.json', encoding='utf-8') as stream:
