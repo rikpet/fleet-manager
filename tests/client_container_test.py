@@ -16,7 +16,7 @@ class MockContainer():
 
 @pytest.fixture
 def mock_container():
-    with open('tests\\client_container_attribute_sample.json', encoding='utf-8') as stream:
+    with open('tests/client_container_attribute_sample.json', encoding='utf-8') as stream:
         mock_container_object = MockContainer(json.load(stream))
         return Container(mock_container_object)
 
