@@ -23,7 +23,7 @@ APPLICATION_NAME = os.getenv("APPLICATION_NAME", "fleet-manager-client")
 PUSH_INTERVAL = int(os.getenv("PUSH_INTERVAL", "60"))
 DEVICE_NAME = os.getenv("DEVICE_NAME", "John Doe")
 FM_SERVER_ADDRESS = os.getenv("FLEET_MANAGER_SERVER_ADDRESS", "127.0.0.1")
-FM_SERVER_PORT = os.getenv("FLEET_MANAGER_SERVER_PORT", "5000")
+FM_SERVER_PORT = os.getenv("FLEET_MANAGER_SERVER_PORT", "5010")
 
 ENABLE_LOG_SERVER = os.getenv("ENABLE_LOG_SERVER", "False").lower() in ("true", "1")
 LOG_SERVER_IP = os.getenv("LOG_SERVER_IP", "127.0.0.1")

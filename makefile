@@ -33,5 +33,11 @@ run-all: run-server run-client
 deploy-all:		## Deploys (builds and runs) both server and client applications
 deploy-all: build-all run-all
 
+pylint:			## Run pylint on repository
+	pylint --fail-under=9.5 $$(git ls-files '*.py')
+
+pytest:			## Ryn pytest
+	pytest
+
 
 
