@@ -13,7 +13,7 @@ import os
 from http import HTTPStatus
 from flask import Flask, request, render_template, Response
 from flask_socketio import SocketIO
-from distributed_logger import setup_logging, disable_loggers, level_translator
+from decentralized_logger import setup_logging, disable_loggers, level_translator
 
 from fleet import Fleet
 from docker_hub import DockerHub

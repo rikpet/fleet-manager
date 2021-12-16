@@ -14,7 +14,7 @@ import time
 import os
 import socketio
 from socketio.exceptions import BadNamespaceError, ConnectionError as SocketConnectionError
-from distributed_logger import setup_logging, disable_loggers, level_translator
+from decentralized_logger import setup_logging, disable_loggers, level_translator
 
 from device import Device
 

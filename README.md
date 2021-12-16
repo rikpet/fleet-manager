@@ -6,7 +6,7 @@ This repository is part of a hoppy project to automate every day life. This proj
 
 Other repositories in this project are:
 
-- [Decentralized logger](https://github.com/rikpet/distributed_logger)
+- [Decentralized logger](https://github.com/rikpet/decentralized-logger)
 
 ## Introduction to the repository
 **Simple tool to handle a network of docker container spread out over several devices.**
