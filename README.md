@@ -44,7 +44,8 @@ pip install -r dev_requirements.txt
 ```
 
 ### Windows
-A ``Makefile`` is available to help with development, to utilize this tool on windows, install GnuWin32 by in command line type:
+A ``Makefile`` is available to help with development, to utilize this tool on windows, install GnuWin32 by running the
+following command:
 
 ```bash
 winget install GnuWin32.Make
