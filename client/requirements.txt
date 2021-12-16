@@ -3,4 +3,4 @@ requests
 flask
 psutil
 python-socketio
-git+https://github.com/rikpet/distributed_logger.git
+git+https://github.com/rikpet/decentralized-logger.git
