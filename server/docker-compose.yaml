@@ -11,10 +11,10 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - FLASK_ENV=development
+      - APPLICATION_NAME=fleet-manager-server
       - DOCKER_HUB_USERNAME
       - DOCKER_HUB_PASSWORD
       - DOCKER_HUB_REPO
-      - APPLICATION_NAME
       - ENABLE_LOG_SERVER
       - LOG_SERVER_IP
       - LOG_SERVER_PORT

@@ -110,7 +110,7 @@ def telemetry(telemetry_post):
     try:
         socket_io.emit('telemetry', telemetry_post)
     except BadNamespaceError:
-        log.warning("Could not send telemetry to server",)
+        log.warning("Could not send telemetry to server at %s", fleet_manager_server_url())
 
 @socket_io.on(f'command_{DEVICE_ID}')
 def command(cmd):

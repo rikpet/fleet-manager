@@ -29,21 +29,17 @@ The Docker images is often available in two different version:
 
 The server application can either ran as a python application or inside a docker container. This tutorial will focus on running the application in a docker container on a raspberry pi.
 
-1. Install Docker by running the following command:
-    ```bash 
-    curl -sSL https://get.docker.com | sh
-    ```
+1. Install Docker and docker-compose. Good guide for this can be found [here](https://dev.to/elalemanyo/how-to-install-docker-and-docker-compose-on-raspberry-pi-1mo)
 
 2. Create an account on [Docker hub](https://hub.docker.com/). This is needed for the version control to work.
 
-3. Set environment variables. Required environment variables must be set for the application to start
+3. Set environment variables (for raspberry pi, this can be done in ``/etc/environment`` in the form of ``VARIABLE=value``). Note that required environment variables must be set for the application to start
 
     | Variable | Importance | Description |
     |----------|------------|-------------|
     | DOCKER_HUB_USERNAME | Required | Username for the Docker hub account |
     | DOCKER_HUB_PASSWORD | Required | Password for the Docker hub account |
     | DOCKER_HUB_REPO | Required | Docker hub repository where the images can be found. Should be ``rikpet/easy-living`` if the purpose is to use this repository, but this variable can be pointed towards another repo if wanted. Note that the docker hub account need access to the repository for this application to work as intended |
-    | APPLICATION_NAME | Optional | Application name, used in logger, defaults to ``fleet-manager-server`` |
     | ENABLE_LOG_SERVER | Optional | Enable ``decentralized logger``, defaults to ``False`` |
     | LOG_SERVER_IP | Optional | IP to ``decentralized logger``, defaults to ``127.0.0.1``
     | LOG_SERVER_PORT | Optional | Port for ``decentralized logger``, defaults to ``9020`` |
@@ -51,7 +47,7 @@ The server application can either ran as a python application or inside a docker
 
 4. Start the container. There are a ``docker-compose.yaml`` to help create the container. Download the composer file to the device, change which version to use (stable or beta) in the file and run:
     ```bash
-    docker-compose --file docker-compose.yaml up -d
+    docker-compose --file docker-compose.yaml up -d --remove-orphans
     ```
 
 5. The application should now be running. Open a web browser on any device in the same network and go to:
@@ -67,7 +63,7 @@ The client application can either ran as a python application or inside a docker
 
 First follow step 1 and 2 from the server application tutorial.
 
-3. Set environment variables
+3. Set environment variables (for raspberry pi, this can be done in ``/etc/environment`` in the form of ``VARIABLE=value``).
 
     | Variable | Importance | Description |
     |----------|------------|-------------|
@@ -75,7 +71,6 @@ First follow step 1 and 2 from the server application tutorial.
     | DEVICE_NAME | Optional | Device name displayed in server UI, defaults to ``John Doe`` |
     | FM_SERVER_ADDRESS | Optional | IP address to device running fleet manager server applciation, defaults to ``127.0.0.1`` |
     | FM_SERVER_PORT | Optional | Port used by the fleet manager server application, defaults tp ``5010`` |
-    | APPLICATION_NAME | Optional | Application name, used in logger, defaults to ``fleet-manager-server`` |
     | ENABLE_LOG_SERVER | Optional | Enable ``decentralized logger``, defaults to ``False`` |
     | LOG_SERVER_IP | Optional | IP to ``decentralized logger``, defaults to ``127.0.0.1``
     | LOG_SERVER_PORT | Optional | Port for ``decentralized logger``, defaults to ``9020`` |
@@ -83,7 +78,7 @@ First follow step 1 and 2 from the server application tutorial.
 
 4. Start the container. There are a ``docker-compose.yaml`` to help out creating the container. Download the composer file to the device, change which version to use (stable or beta) in the file and run:
     ```bash
-    docker-compose --file docker-compose.yaml up -d
+    docker-compose --file docker-compose.yaml up -d --remove-orphans
     ```
 
 5. The application should now be running now. 
