@@ -39,5 +39,5 @@ pylint:			## Run pylint on repository
 pytest:			## Ryn pytest
 	pytest
 
-
-
+check-wf: 		## Run github workflows
+check-wf: pylint pytest

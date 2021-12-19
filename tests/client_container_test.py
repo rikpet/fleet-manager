@@ -1,6 +1,4 @@
-# pylint: disable=invalid-name, protected-access, redefined-outer-name, too-few-public-methods
-# pylint: disable=missing-class-docstring, missing-module-docstring, missing-function-docstring
-# pylint: disable=line-too-long
+# pylint: skip-file
 
 import json
 import pytest
