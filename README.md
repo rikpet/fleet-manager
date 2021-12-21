@@ -43,7 +43,7 @@ The server application can either ran as a python application or inside a docker
     | ENABLE_LOG_SERVER | Optional | Enable ``decentralized logger``, defaults to ``False`` |
     | LOG_SERVER_IP | Optional | IP to ``decentralized logger``, defaults to ``127.0.0.1``
     | LOG_SERVER_PORT | Optional | Port for ``decentralized logger``, defaults to ``9020`` |
-    | LOG_LEVEL | Optional | Logger level, defaults to ``DEBUG`` |
+    | LOG_LEVEL | Optional | Logger level, defaults to ``INFO`` |
 
 4. Start the container. There are a ``docker-compose.yaml`` to help create the container. Download the composer file to the device, change which version to use (stable or beta) in the file and run:
     ```bash
@@ -69,12 +69,12 @@ First follow step 1 and 2 from the server application tutorial.
     |----------|------------|-------------|
     | PUSH_INTERVAL | Optional | Push interval for telemetry in seconds, defaults to ``60`` |
     | DEVICE_NAME | Optional | Device name displayed in server UI, defaults to ``John Doe`` |
-    | FM_SERVER_ADDRESS | Optional | IP address to device running fleet manager server applciation, defaults to ``127.0.0.1`` |
-    | FM_SERVER_PORT | Optional | Port used by the fleet manager server application, defaults tp ``5010`` |
+    | FLEET_MANAGER_SERVER_ADDRESS | Optional | IP address to device running fleet manager server applciation, defaults to ``127.0.0.1`` |
+    | FLEET_MANAGER_SERVER_PORT | Optional | Port used by the fleet manager server application, defaults tp ``5010`` |
     | ENABLE_LOG_SERVER | Optional | Enable ``decentralized logger``, defaults to ``False`` |
     | LOG_SERVER_IP | Optional | IP to ``decentralized logger``, defaults to ``127.0.0.1``
     | LOG_SERVER_PORT | Optional | Port for ``decentralized logger``, defaults to ``9020`` |
-    | LOG_LEVEL | Optional | Logger level, defaults to ``DEBUG`` |
+    | LOG_LEVEL | Optional | Logger level, defaults to ``INFO`` |
 
 4. Start the container. There are a ``docker-compose.yaml`` to help out creating the container. Download the composer file to the device, change which version to use (stable or beta) in the file and run:
     ```bash

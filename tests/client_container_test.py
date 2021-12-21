@@ -4,6 +4,9 @@ import json
 import pytest
 from client.container import Container
 
+with open('tests/client_container_attribute_sample.json', encoding='utf-8') as stream:
+    CONTAINER_ATTRIBUTE_SAMPLE = json.load(stream)
+
 class MockContainer():
     def __init__(self, attributes) -> None:
         self.attrs = attributes
@@ -14,9 +17,8 @@ class MockContainer():
 
 @pytest.fixture
 def mock_container():
-    with open('tests/client_container_attribute_sample.json', encoding='utf-8') as stream:
-        mock_container_object = MockContainer(json.load(stream))
-        return Container(mock_container_object)
+    mock_container_object = MockContainer(CONTAINER_ATTRIBUTE_SAMPLE)
+    return Container(mock_container_object)
 
 def test_name_is_extracted_correctly(mock_container):
     assert mock_container.name == "fm-server"

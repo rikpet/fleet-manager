@@ -15,6 +15,9 @@ help:
 build-%: 		## Builds the docker image [% = server/client]
 	docker build --pull --rm --file "$*\Dockerfile" --tag rikpet/easy-living:fm-$*-beta $*
 
+push-%:			## Push docker image to docker hub [% = server/client]. Need to be signed in to Docker hub
+	docker push rikpet/easy-living:fm-$*-beta
+
 run-%:			## Runs the docker image, will not build new images [% = server/client]
 	docker-compose --file $*/docker-compose.yaml up -d
 

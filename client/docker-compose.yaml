@@ -14,8 +14,8 @@ services:
       - APPLICATION_NAME=fleet-manager-client
       - PUSH_INTERVAL
       - DEVICE_NAME
-      - FM_SERVER_ADDRESS
-      - FM_SERVER_PORT
+      - FLEET_MANAGER_SERVER_ADDRESS
+      - FLEET_MANAGER_SERVER_PORT
       - ENABLE_LOG_SERVER
       - LOG_SERVER_IP
       - LOG_SERVER_PORT

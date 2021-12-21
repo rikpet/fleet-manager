@@ -1,13 +1,16 @@
 """Module for handling the fleet data"""
 
 from datetime import datetime, timedelta
+from docker_hub import DockerHub
 
 DATETIME_STANDARD_FORMAT = "%Y/%m/%d %H:%M:%S"
 
 class Fleet():
-    def __init__(self, docker_hub, event_stream) -> None:
+    def __init__(self, docker_hub: DockerHub, event_stream: object) -> None:
         self._fleet = {}
         self.docker_hub = docker_hub
+
+        self.docker_hub.list_images()
 
         self.event_stream = event_stream
 
@@ -42,7 +45,10 @@ class Fleet():
         Returns:
             bool: If there is a newer image available
         """
-        return image_sha != self.docker_hub.get_image_id(image_tag)
+        image_id = self.docker_hub.get_image_id(image_tag)
+        if image_id is None:
+            return None
+        return image_sha != image_id
 
     def device_online(self, time, interval):
         last_updated_post = datetime.strptime(time, DATETIME_STANDARD_FORMAT)

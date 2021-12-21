@@ -10,7 +10,9 @@ This server also enables some commands for the user, such as update, start and s
 
 from logging import getLogger
 import os
+import sys
 from http import HTTPStatus
+from requests import get as http_get
 from flask import Flask, request, render_template, Response
 from flask_socketio import SocketIO
 from decentralized_logger import setup_logging, disable_loggers, level_translator
@@ -37,7 +39,7 @@ APPLICATION_NAME = os.getenv("APPLICATION_NAME", "fleet-manager-server")
 ENABLE_LOG_SERVER = os.getenv("ENABLE_LOG_SERVER", "False").lower() in ("true", "1")
 LOG_SERVER_IP = os.getenv("LOG_SERVER_IP", "127.0.0.1")
 LOG_SERVER_PORT = os.getenv("LOG_SERVER_PORT", "9020")
-LOG_LEVEL = level_translator(os.getenv("LOG_LEVEL", "DEBUG"))
+LOG_LEVEL = level_translator(os.getenv("LOG_LEVEL", "INFO"))
 
 DISABLE_LOGGERS = [
     "werkzeug",
@@ -103,14 +105,20 @@ def command() -> Response:
     send_command(command_info['id'], command_info)
     return Response(status=HTTPStatus.ACCEPTED)
 
-fleet = Fleet(
-    DockerHub(DOCKER_HUB_USERNAME, DOCKER_HUB_PASSWORD, DOCKER_HUB_REPO),
-    event_stream
-)
+fleet = None    # pylint: disable=invalid-name
 
 def main():
     """Main program"""
     disable_loggers(DISABLE_LOGGERS)
+
+    try:
+        docker_hub = DockerHub(http_get, DOCKER_HUB_USERNAME, DOCKER_HUB_PASSWORD, DOCKER_HUB_REPO)
+    except PermissionError:
+        log.error('Could not log into Docker hub')
+        sys.exit(1)
+
+    global fleet
+    fleet = Fleet(docker_hub,event_stream)
 
     socket_io.run(
         web_app,
