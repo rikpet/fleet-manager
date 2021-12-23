@@ -24,18 +24,6 @@ run-%:			## Runs the docker image, will not build new images [% = server/client]
 deploy-%:		## Deploys the application, runs both a build and the runs the image [% = server/client]
 deploy-%: build-% run-% 
 
-
-build-all:		## Build the docker image for the server and client applications
-build-all: build-server build-client
-
-
-run-all:		## Runs the docker image for the server and client applications
-run-all: run-server run-client
-	
-
-deploy-all:		## Deploys (builds and runs) both server and client applications
-deploy-all: build-all run-all
-
 pylint:			## Run pylint on repository
 	pylint --fail-under=9.5 $$(git ls-files '*.py')
 

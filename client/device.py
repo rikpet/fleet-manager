@@ -22,7 +22,7 @@ class Device(): # pylint: disable=too-many-instance-attributes
         self._cached_ip_address = None
         self.containers = []
 
-    def update(self):
+    def update(self) -> None:
         """Updating list of containers"""
         with self.lock:
             container_list = self.client.containers.list(all=True)
@@ -31,7 +31,12 @@ class Device(): # pylint: disable=too-many-instance-attributes
             for container in container_list:
                 self.containers.append(Container(container))
 
-    def information(self):
+    def information(self) -> dict:
+        """Compiles a dictionary with information about the fleet.
+
+        Returns:
+            dict: Information about the fleet
+        """
         with self.lock:
             device_object = {
                 "name": self.device_name,
@@ -62,7 +67,7 @@ class Device(): # pylint: disable=too-many-instance-attributes
             return self._cached_ip_address
 
     @staticmethod
-    def cpu_load(interval = 2) -> float:
+    def cpu_load(interval: int = 2) -> float:
         """Getting device CPU load.
 
         Args:

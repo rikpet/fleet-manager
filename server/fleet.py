@@ -31,21 +31,23 @@ class Fleet():
         for device in self._fleet.values():
             device['online'] = self.device_online(device['last_updated'], device['push_interval'])
             for container in device['containers']:
-                container['update_available'] = self.update_available(  container['image_tag'],
+                container['update_available'] = self.update_available(  container['image_repo'],
+                                                                        container['image_tag'],
                                                                         container['image_sha'])
         return self._fleet
 
-    def update_available(self, image_tag: str, image_sha: str) -> bool:
+    def update_available(self, image_repo: str, image_tag: str, image_sha: str) -> bool:
         """Checks if there is a newer image available in remote repository
 
         Args:
+            image_repo (str): The repository of the image
             image_tag (str): The tag of the current image
             image_sha (str): The SHA of the current image
 
         Returns:
             bool: If there is a newer image available
         """
-        image_id = self.docker_hub.get_image_id(image_tag)
+        image_id = self.docker_hub.get_remote_image_sha(image_repo, image_tag)
         if image_id is None:
             return None
         return image_sha != image_id

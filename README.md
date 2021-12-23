@@ -45,7 +45,12 @@ The server application can either ran as a python application or inside a docker
     | LOG_SERVER_PORT | Optional | Port for ``decentralized logger``, defaults to ``9020`` |
     | LOG_LEVEL | Optional | Logger level, defaults to ``INFO`` |
 
-4. Start the container. There are a ``docker-compose.yaml`` to help create the container. Download the composer file to the device, change which version to use (stable or beta) in the file and run:
+4. Start the container. There is a template ``docker-compose.yaml`` in the repository to help create the container. To download the template file run:
+    ```
+    curl -sSL https://raw.githubusercontent.com/rikpet/fleet-manager/main/server/docker-compose.yaml -o [FILE_NAME].yaml
+    ```
+
+    Change the composer file accordingly, for example which version to use (stable or beta) in the file and then run:
     ```bash
     docker-compose --file docker-compose.yaml up -d --remove-orphans
     ```
@@ -76,7 +81,12 @@ First follow step 1 and 2 from the server application tutorial.
     | LOG_SERVER_PORT | Optional | Port for ``decentralized logger``, defaults to ``9020`` |
     | LOG_LEVEL | Optional | Logger level, defaults to ``INFO`` |
 
-4. Start the container. There are a ``docker-compose.yaml`` to help out creating the container. Download the composer file to the device, change which version to use (stable or beta) in the file and run:
+4. Start the container. There is a template ``docker-compose.yaml`` in the repository to help create the container. To download the template file run:
+    ```
+    curl -sSL https://raw.githubusercontent.com/rikpet/fleet-manager/main/client/docker-compose.yaml -o [FILE_NAME].yaml
+    ```
+
+    Change the composer file accordingly, for example which version to use (stable or beta) in the file and then run:
     ```bash
     docker-compose --file docker-compose.yaml up -d --remove-orphans
     ```

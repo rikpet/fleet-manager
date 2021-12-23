@@ -32,6 +32,9 @@ def test_full_id_is_extracted_correctly(mock_container):
 def test_sha_is_extracted_correctly(mock_container):
     assert mock_container.image_sha == "sha256:25cc55b19c1d34f6911e366d840497cc80a9eb4808d80f03e86a1225acc730be"
 
+def test_repo_is_extracted_corretly(mock_container):
+    assert mock_container.image_repo == "rikpet/easy-living"
+
 def test_tag_is_extracted_correctly(mock_container):
     assert mock_container.image_tag == "fm-server-latest"
 

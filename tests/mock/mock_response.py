@@ -2,7 +2,7 @@
 from http import HTTPStatus
 
 class MockResponse():
-    """Mocking Respons object from python standard library requests"""
+    """Mocking Respons object from python standard library :module:`requests`"""
     def __init__(self, response: dict, status_code: HTTPStatus) -> None:
         self._response = response
         self._status_code = status_code

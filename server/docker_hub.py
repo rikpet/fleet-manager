@@ -59,6 +59,8 @@ class DockerHub():
         self.log = getLogger(self.__class__.__name__)
 
         self.images = []
+        self.cache = {}
+        self.cache_time = 60
 
     def list_images(self) -> list[str]:
         """List available images in repository"
@@ -73,11 +75,12 @@ class DockerHub():
         self.images = response_body["tags"]
         return self.images
 
-    def get_manifest(self, image_tag: str) -> dict:
+    def get_manifest(self, image_repo: str, image_tag: str) -> dict:
         """Retrieves the manifest for the specified image from remote repository
 
         Args:
-            image_tag (str): image to acquire manifest for
+            image_repo (str): image repo where to find the image
+            image_tag (str): image tag to acquire manifest for
 
         Returns:
             dict: Manifest
@@ -86,21 +89,63 @@ class DockerHub():
             'Authorization': f'Bearer {self.token()}',
             'Accept': 'application/vnd.docker.distribution.manifest.v2+json'
         }
-        response = self.http_get(f'{self.base_url}/manifests/{image_tag}', headers=header)
+
+        base_url = self.BASE_URL % image_repo
+        response = self.http_get(f'{base_url}/manifests/{image_tag}', headers=header)
         return response.json()
 
-    def get_image_id(self, image_tag: str) -> str:
-        """Gets the image ID (SHA) from the remote repository image which
-        corresponds to the defined image_tag
+    def get_remote_image_sha(self, image_repo: str, image_tag: str) -> str:
+        """Gets the image SHA from the remote repository image which
+        corresponds to the defined image tag.
+
+        Cache function enabled to minimize requests to docker hub
 
         Args:
+            image_repo (str): Repository for the image
             image_tag (str): Image tag
 
         Returns:
-            str: Remote image ID (SHA). Returns None if image can't be found.
+            str: Remote image SHA. Returns None if image can't be found.
         """
+        self.log.debug('Checking if image SHA "%s" is in cache', image_tag)
+        for cache_item_key, cache_item_value in self.cache.items():
+            if cache_item_key == image_tag and datetime.now() < cache_item_value['timestamp'] + timedelta(seconds=self.cache_time): # pylint: disable=line-too-long
+                self.log.debug('Valid cache found')
+                return cache_item_value['remote_image_sha']
+
+        self.log.debug('No valid cache found')
+
+        manifest = self.get_manifest(image_repo, image_tag)
+        if 'errors' in manifest:
+            if manifest['errors']['code'] == 'MANIFEST_UNKNOWN':
+                self.log.error('Could not find image: %s:%s', image_repo, image_tag)
+                self.cache[image_tag] = {
+                    "timestamp": datetime.now(),
+                    "remote_image_sha": None
+                }
+
+            self.log.error(
+                'Error when trying to recieve manifest from docker hub. Error message: "%s"',
+                manifest['errors']
+            )
+            return None
+
         try:
-            manifest = self.get_manifest(image_tag)
-            return manifest["config"]["digest"]
+            remote_image_sha = manifest["config"]["digest"]
+            self.cache[image_tag] = {
+                "timestamp": datetime.now(),
+                "remote_image_sha": remote_image_sha
+            }
+
+            # Cache time is based on the limitaitons for a free account at Docker hub
+            # Limitations are 200 requests within 6 hours
+            self.cache_time = (6 * 3600 * len(self.cache.keys())) / 200
+
+            return remote_image_sha
+
         except KeyError:
+            self.log.error(
+                'Could not extract image SHA for %s from Manifest. Manifest content: %s',
+                image_tag, manifest
+            )
             return None
