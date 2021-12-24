@@ -12,7 +12,7 @@
 name: CodeQL
 
 on: 
-  push:
+  pull_request:
     path-ignore: 
       - tests/*
   
