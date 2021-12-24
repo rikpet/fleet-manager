@@ -11,7 +11,13 @@
 #
 name: CodeQL
 
-on: 
+on:
+  push:
+    branches:
+      - main
+    path-ignore: 
+      - tests/*
+
   pull_request:
     path-ignore: 
       - tests/*
