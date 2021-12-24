@@ -39,6 +39,27 @@ def manifest_response_2():
         status_code=HTTPStatus.ACCEPTED
     )
 
+def manifest_error_response():
+    return MockResponse(
+        response={
+            'errors': [
+                {
+                    'code': 'UNAUTHORIZED',
+                    'message': 'authentication required',
+                    'detail': [
+                        {
+                            'Type': 'repository',
+                            'Class': '',
+                            'Name': 'marthoc/deconz',
+                            'Action': 'pull'
+                        }
+                    ]
+                }
+            ]
+        },
+        status_code=HTTPStatus.ACCEPTED
+    )
+
 def manifest_response_no_image():
     return MockResponse(response={}, status_code=HTTPStatus.ACCEPTED)
 
@@ -65,7 +86,7 @@ def test_returning_manifest():
     mock_http_get = MockHttpGet(response=manifest_response)
     docker_hub_object = DockerHub(mock_http_get, "", "", "")
 
-    manifest = docker_hub_object.get_manifest("fake_repo", "fake_tag")
+    manifest = docker_hub_object.get_manifest("fake_tag")
     assert manifest == expected_response
 
     assert "/manifests/fake_tag" in mock_http_get.received_url
@@ -74,21 +95,36 @@ def test_returning_manifest():
 
 def test_get_remote_image_sha_returns_correct():
     mock_http_get = MockHttpGet(response=manifest_response)
-    docker_hub_object = DockerHub(mock_http_get, "", "", "")
+    docker_hub_object = DockerHub(mock_http_get, "", "", "fake_repo")
 
     image_sha = docker_hub_object.get_remote_image_sha("fake_repo", "fake_tag")
     assert image_sha == "ABCDE"
 
+def test_get_image_returns_none_if_wrong_repo():
+    mock_http_get = MockHttpGet(response=manifest_response)
+    docker_hub_object = DockerHub(mock_http_get, "", "", "a_repo")
+
+    image_sha = docker_hub_object.get_remote_image_sha("another_repo", "fake_tag")
+    assert image_sha is None
+
 def test_get_image_returns_none():
     mock_http_get = MockHttpGet(response=manifest_response_no_image)
-    docker_hub_object = DockerHub(mock_http_get, "", "", "")
+    docker_hub_object = DockerHub(mock_http_get, "", "", "fake_repo")
 
     image_sha = docker_hub_object.get_remote_image_sha("fake_repo", "fake_tag")
     assert image_sha is None
 
+def test_docker_hub_error_response_returns_none():
+    mock_http_get = MockHttpGet(response=manifest_error_response)
+    docker_hub_object = DockerHub(mock_http_get, "", "", "fake_repo")
+
+    image_sha = docker_hub_object.get_remote_image_sha("fake_repo", "fake_tag")
+    assert image_sha is None
+
+
 def test_image_sha_cache_functions_correctly():
     mock_http_get = MockHttpGet(response=manifest_response)
-    docker_hub_object = DockerHub(mock_http_get, "", "", "")
+    docker_hub_object = DockerHub(mock_http_get, "", "", "fake_repo")
 
     image_sha_1 = docker_hub_object.get_remote_image_sha("fake_repo", "fake_tag")
     mock_http_get.response = manifest_response_2
@@ -97,7 +133,7 @@ def test_image_sha_cache_functions_correctly():
 
 def test_image_sha_gets_new_sha_after_chache_timeout():
     mock_http_get = MockHttpGet(response=manifest_response)
-    docker_hub_object = DockerHub(mock_http_get, "", "", "")
+    docker_hub_object = DockerHub(mock_http_get, "", "", "fake_repo")
 
     image_sha_1 = docker_hub_object.get_remote_image_sha("fake_repo", "fake_tag")
     
