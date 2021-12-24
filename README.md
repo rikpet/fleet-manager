@@ -15,6 +15,8 @@ The system consists of a client application, which can be installed at every dev
 
 The second application is a server application, which act as a centralized server for data gathering and user interaction. The server has a simple web application which enables an user to interact with the different devices and containers in the system. The servers enables an user to send command to the different client and can through the web application, for example, update a container to the latest image available.
 
+> **NOTE:** The server application can only gather information about images were the Docker hub account have access to.
+
 ## Getting started
 These application are mainly built for being deployed with docker containers. 
 
