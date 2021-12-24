@@ -1,0 +1,42 @@
+{
+    "name": "Main",
+    "id": "242ac130002",
+    "ip_address": "172.19.0.1",
+    "cpu_load": 2.3,
+    "memory_usage": 32.5,
+    "containers": [
+        {
+            "name": "fm-client",
+            "id": "fa2f057cb5",
+            "image_sha": "sha256:912915d5560788e156019ac2f3f00ab0faf25d9f3dec16b6db14ed46078a2d6d",
+            "image_name": "rikpet/easy-living:fm-client-stable",
+            "image_tag": "fm-client-beta",
+            "status": "running"
+        },
+        {
+            "name": "fm-server",
+            "id": "e18c61ef70",
+            "image_sha": "sha256:629bb5d23d8398cb50168cb1e1672d5cf621bb5ee5d234bb066b4806b4299b25",
+            "image_name": "rikpet/easy-living:fm-server-stable",
+            "image_tag": "fm-server-stable",
+            "status": "running"
+        },
+        {
+            "name": "log-server",
+            "id": "d54c8c8cda",
+            "image_sha": "sha256:98403c952fbd2c492a8ba07a90c645293620f050d0438623747b153a44d2b5cc",
+            "image_name": "rikpet/easy-living:log-server-stable",
+            "image_tag": "log-server-stable",
+            "status": "running"
+        },
+        {
+            "name": "deconz",
+            "id": "2e4bb0095e",
+            "image_sha": "sha256:75796be17a1a9655091314578ebe709a24376d63e9d2d1f75ed58e58d4f1ed12",
+            "image_name": "marthoc/deconz:stable",
+            "image_tag": "stable",
+            "status": "exited"
+        }
+    ],
+    "push_interval": 60
+}

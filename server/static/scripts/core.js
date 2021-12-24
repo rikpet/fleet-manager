@@ -76,17 +76,19 @@ async function update_container_status(container_id, container_status) {
 async function update_container_update_status(container_id, container_update_available) {
     container_update_status_object =  $(`#container-update-status-${container_id}`)
     
-    if (container_update_available && container_update_status_object.hasClass('bg-success')) {
+    if (container_update_available == null) {
         container_update_status_object
-            .removeClass('bg-success')
-            .addClass('bg-warning')
+            .attr('class', 'badge bg-secondary')
+            .text('No information')
+    }
+    else if (container_update_available) {
+        container_update_status_object
+            .attr('class', 'badge bg-warning')
             .text('New version available')
     }
-    else if (!container_update_available && container_update_status_object.hasClass('bg-warning')) {
+    else if (!container_update_available) {
         container_update_status_object
-            .removeClass('bg-warning')
-            .addClass('bg-success')
+            .attr('class', 'badge bg-success')
             .text('Up to date')
     }
-    
 }

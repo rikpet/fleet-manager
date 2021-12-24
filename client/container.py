@@ -60,6 +60,15 @@ class Container():
         return self.attr["Config"]["Image"]
 
     @property
+    def image_repo(self) -> str:
+        """Image repository
+
+        Returns:
+            str: Image repository
+        """
+        return self.image_name.split(':')[0]
+
+    @property
     def image_tag(self) -> str:
         """Image tag which the container is based on
 
@@ -168,6 +177,7 @@ class Container():
             "id": self.id,
             "image_sha": self.image_sha,
             "image_name": self.image_name,
+            "image_repo": self.image_repo,
             "image_tag": self.image_tag,
             "status": self.status
         }

@@ -28,7 +28,7 @@ FM_SERVER_PORT = os.getenv("FLEET_MANAGER_SERVER_PORT", "5010")
 ENABLE_LOG_SERVER = os.getenv("ENABLE_LOG_SERVER", "False").lower() in ("true", "1")
 LOG_SERVER_IP = os.getenv("LOG_SERVER_IP", "127.0.0.1")
 LOG_SERVER_PORT = os.getenv("LOG_SERVER_PORT", "9020")
-LOG_LEVEL = level_translator(os.getenv("LOG_LEVEL", "DEBUG"))
+LOG_LEVEL = level_translator(os.getenv("LOG_LEVEL", "INFO"))
 
 DEVICE_ID = hex(getnode())[2:]
 
@@ -110,7 +110,7 @@ def telemetry(telemetry_post):
     try:
         socket_io.emit('telemetry', telemetry_post)
     except BadNamespaceError:
-        log.warning("Could not send telemetry to server",)
+        log.warning("Could not send telemetry to server at %s", fleet_manager_server_url())
 
 @socket_io.on(f'command_{DEVICE_ID}')
 def command(cmd):
