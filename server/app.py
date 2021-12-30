@@ -13,7 +13,7 @@ import os
 import sys
 from http import HTTPStatus
 from requests import get as http_get
-from flask import Flask, request, render_template, Response
+from flask import Flask, request, render_template, Response, jsonify
 from flask_socketio import SocketIO
 from decentralized_logger import setup_logging, disable_loggers, level_translator
 
@@ -66,6 +66,11 @@ def index():
     if fleet.empty():
         return "No device registered"
     return render_template("index.html", fleet=fleet.get_fleet_information())
+
+@web_app.route("/fleet", methods=['GET'])
+def fleet():
+    """Endpoint to retrieve data about fleet"""
+    return jsonify(fleet.get_fleet_information())
 
 @web_app.route("/myip")
 def my_ip():

@@ -2,7 +2,7 @@ FROM arm32v7/python:3.9.6-alpine
 WORKDIR /app
 COPY . .
 
-RUN apk add git && \
+RUN apk add git build-base && \
     python -m pip install --upgrade pip && \
     pip install -r requirements.txt
 
