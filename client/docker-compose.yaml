@@ -11,9 +11,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - FLASK_ENV=development
-      - APPLICATION_NAME=fleet-manager-client
+      - APPLICATION_NAME
       - PUSH_INTERVAL
-      - DEVICE_NAME
       - FLEET_MANAGER_SERVER_ADDRESS
       - FLEET_MANAGER_SERVER_PORT
       - ENABLE_LOG_SERVER
