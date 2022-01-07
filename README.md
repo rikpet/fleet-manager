@@ -69,9 +69,9 @@ The server application can either ran as a python application or inside a docker
 
 The client application can either ran as a python application or inside a docker container. This tutorial will focus on running the application in a docker container on a raspberry pi.
 
-First follow step 1 and 2 from the server application tutorial.
+1. Install Docker and docker-compose. Good guide for this can be found [here](https://dev.to/elalemanyo/how-to-install-docker-and-docker-compose-on-raspberry-pi-1mo)
 
-3. Set environment variables (for raspberry pi, this can be done in ``/etc/environment`` in the form of ``VARIABLE=value``).
+2. Set environment variables (for raspberry pi, this can be done in ``/etc/environment`` in the form of ``VARIABLE=value``).
 
     | Variable | Importance | Description |
     |----------|------------|-------------|
@@ -84,7 +84,7 @@ First follow step 1 and 2 from the server application tutorial.
     | LOG_SERVER_PORT | Optional | Port for ``decentralized logger``, defaults to ``9020`` |
     | LOG_LEVEL | Optional | Logger level, defaults to ``INFO`` |
 
-4. Start the container. There is a template ``docker-compose.yaml`` in the repository to help create the container. To download the template file run:
+3. Start the container. There is a template ``docker-compose.yaml`` in the repository to help create the container. To download the template file run:
     ```
     curl -sSL https://raw.githubusercontent.com/rikpet/fleet-manager/main/client/docker-compose.yaml -o [FILE_NAME].yaml
     ```
@@ -94,7 +94,7 @@ First follow step 1 and 2 from the server application tutorial.
     docker-compose --file docker-compose.yaml up -d --remove-orphans
     ```
 
-5. The application should now be running now. 
+4. The application should now be running now. 
 
 
 To build the docker image run:
