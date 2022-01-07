@@ -42,7 +42,6 @@ The server application can either ran as a python application or inside a docker
     | DOCKER_HUB_USERNAME | Required | Username for the Docker hub account |
     | DOCKER_HUB_PASSWORD | Required | Password for the Docker hub account |
     | DOCKER_HUB_REPO | Required | Docker hub repository where the images can be found. Should be ``rikpet/easy-living`` if the purpose is to use this repository, but this variable can be pointed towards another repo if wanted. Note that the docker hub account need access to the repository for this application to work as intended |
-    | APPLICATION_NAME | Optional | Device name displayed in server UI, defaults to ``fleet-manager-server`` |
     | ENABLE_LOG_SERVER | Optional | Enable ``decentralized logger``, defaults to ``False`` |
     | LOG_SERVER_IP | Optional | IP to ``decentralized logger``, defaults to ``127.0.0.1``
     | LOG_SERVER_PORT | Optional | Port for ``decentralized logger``, defaults to ``9020`` |
@@ -76,7 +75,7 @@ The client application can either ran as a python application or inside a docker
     | Variable | Importance | Description |
     |----------|------------|-------------|
     | PUSH_INTERVAL | Optional | Push interval for telemetry in seconds, defaults to ``60`` |
-    | APPLICATION_NAME | Optional | Device name displayed in server UI, defaults to ``fleet-manager-client`` |
+    | DEVICE_NAME | Optional | Hardware device name displayed in server UI, defaults to ``John Doe`` |
     | FLEET_MANAGER_SERVER_ADDRESS | Optional | IP address to device running fleet manager server applciation, defaults to ``127.0.0.1`` |
     | FLEET_MANAGER_SERVER_PORT | Optional | Port used by the fleet manager server application, defaults tp ``5010`` |
     | ENABLE_LOG_SERVER | Optional | Enable ``decentralized logger``, defaults to ``False`` |

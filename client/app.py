@@ -18,9 +18,11 @@ from decentralized_logger import setup_logging, disable_loggers, level_translato
 
 from device import Device
 
+APPLICATION_NAME = "fleet-manager-client"
+
 # Environment variables
-APPLICATION_NAME = os.getenv("APPLICATION_NAME", "fleet-manager-client")
 PUSH_INTERVAL = int(os.getenv("PUSH_INTERVAL", "60"))
+DEVICE_NAME = os.getenv("DEVICE_NAME", "John Doe")
 FM_SERVER_ADDRESS = os.getenv("FLEET_MANAGER_SERVER_ADDRESS", "127.0.0.1")
 FM_SERVER_PORT = os.getenv("FLEET_MANAGER_SERVER_PORT", "5010")
 
@@ -95,7 +97,7 @@ def fleet_manager_server_url():
 
 
 fleet_manager = FleetManagerClient(PUSH_INTERVAL)
-device = Device(fleet_manager_server_url(), APPLICATION_NAME, DEVICE_ID)
+device = Device(fleet_manager_server_url(), DEVICE_NAME, DEVICE_ID)
 
 
 @socket_io.event

@@ -20,6 +20,8 @@ from decentralized_logger import setup_logging, disable_loggers, level_translato
 from fleet import Fleet
 from docker_hub import DockerHub
 
+APPLICATION_NAME = "fleet-manager-server"
+
 # Mandatory environment variables
 DOCKER_HUB_USERNAME = os.getenv("DOCKER_HUB_USERNAME")
 DOCKER_HUB_PASSWORD = os.getenv("DOCKER_HUB_PASSWORD")
@@ -35,7 +37,6 @@ if DOCKER_HUB_PASSWORD is None:
 if DOCKER_HUB_REPO is None:
     raise AttributeError('Missing eviroment variable "DOCKER_HUB_REPO"')
 
-APPLICATION_NAME = os.getenv("APPLICATION_NAME", "fleet-manager-server")
 ENABLE_LOG_SERVER = os.getenv("ENABLE_LOG_SERVER", "False").lower() in ("true", "1")
 LOG_SERVER_IP = os.getenv("LOG_SERVER_IP", "127.0.0.1")
 LOG_SERVER_PORT = os.getenv("LOG_SERVER_PORT", "9020")
