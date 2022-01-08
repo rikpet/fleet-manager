@@ -10,7 +10,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - FLASK_ENV=development
       - PUSH_INTERVAL
       - DEVICE_NAME
       - FLEET_MANAGER_SERVER_ADDRESS
@@ -19,3 +18,4 @@ services:
       - LOG_SERVER_IP
       - LOG_SERVER_PORT
       - LOG_LEVEL
+      - FLASK_ENV

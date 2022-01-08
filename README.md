@@ -31,7 +31,27 @@ The Docker images is often available in two different version:
 
 The server application can either ran as a python application or inside a docker container. This tutorial will focus on running the application in a docker container on a raspberry pi.
 
-1. Install Docker and docker-compose. Good guide for this can be found [here](https://dev.to/elalemanyo/how-to-install-docker-and-docker-compose-on-raspberry-pi-1mo)
+1. Install docker on the device:
+    ```bash
+    curl -sSL https://get.docker.com | bash
+    ```
+
+2. To remove the need of using ``sudo`` prefix when running docker commands, your current user can be added to the Docker group by running:
+    ```bash
+    sudo usermod -aG docker ${USER}
+    ```
+
+    Check that your user is a part of the group by running:
+    ```bash
+    groups ${USER}
+    ```
+
+3. To install Docker compose we first need to determine which version to use and architecture of the hardware. It is recommended to use the latest version of docker compose. Docker compose versions can be found [here](https://github.com/docker/compose/releases). For architecture, if this is installed on a raspberry pi 3 or 4, use ``armv7``, for raspberry pi zero, use ``armv6``.
+
+    ```bash
+    sudo curl -L "https://github.com/docker/compose/releases/download/v[VERSION]/docker-compose-linux-[ARCHITECTURE]" -o /usr/bin/local/docker-compose
+    sudo chmod +x /usr/bin/local/docker-compose
+    ```
 
 2. Create an account on [Docker hub](https://hub.docker.com/). This is needed for the version control to work.
 
@@ -68,7 +88,7 @@ The server application can either ran as a python application or inside a docker
 
 The client application can either ran as a python application or inside a docker container. This tutorial will focus on running the application in a docker container on a raspberry pi.
 
-1. Install Docker and docker-compose. Good guide for this can be found [here](https://dev.to/elalemanyo/how-to-install-docker-and-docker-compose-on-raspberry-pi-1mo)
+1. Follow steps 1 - 3 from the Server getting started guide above to install Docker and Docker compose.
 
 2. Set environment variables (for raspberry pi, this can be done in ``/etc/environment`` in the form of ``VARIABLE=value``).
 
@@ -93,7 +113,7 @@ The client application can either ran as a python application or inside a docker
     docker-compose --file docker-compose.yaml up -d --remove-orphans
     ```
 
-4. The application should now be running now. 
+4. The application should now be running. 
 
 
 To build the docker image run:

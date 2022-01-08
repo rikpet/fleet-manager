@@ -6,9 +6,10 @@ from docker_hub import DockerHub
 DATETIME_STANDARD_FORMAT = "%Y/%m/%d %H:%M:%S"
 
 class Fleet():
-    def __init__(self, docker_hub: DockerHub, event_stream: object) -> None:
+    def __init__(self, docker_hub: DockerHub, socket_connections: list, event_stream: object) -> None:
         self._fleet = {}
         self.docker_hub = docker_hub
+        self.socket_connections = socket_connections
 
         self.docker_hub.list_images()
 
@@ -17,7 +18,8 @@ class Fleet():
     def add_telemetry(self, telemetry):
         telemetry['last_updated'] = datetime.now().strftime(DATETIME_STANDARD_FORMAT)
         self._fleet[telemetry["id"]] = telemetry
-        self.event_stream(self.get_fleet_information())
+        if len(self.socket_connections) > 0:
+            self.event_stream(self.get_fleet_information())
 
     def empty(self) -> bool:
         """Checks if fleet is empty (no device registered)

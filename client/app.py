@@ -7,6 +7,8 @@ The client is also capable to handle commands from the server and interacts with
 containers.
 """
 
+# TODO: Update instructions on how to install docker-compose https://withblue.ink/2020/06/24/docker-and-docker-compose-on-raspberry-pi-os.html, https://github.com/docker/compose
+
 from logging import getLogger
 import threading
 from uuid import getnode
@@ -148,8 +150,9 @@ def main():
 
     while True:
         try:
-            socket_io.connect(fleet_manager_server_url())
-        except SocketConnectionError:
+            socket_io.connect(fleet_manager_server_url() +'?ignore-me=True', transports='websocket')
+        except SocketConnectionError as ex:
+            print(str(ex))
             log.warning('Could not connect to log server')
             time.sleep(PUSH_INTERVAL)
         else:

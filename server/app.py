@@ -8,7 +8,7 @@ This server also comes with a wasy web app which visualizes the fleet.
 This server also enables some commands for the user, such as update, start and stop.
 """
 
-from logging import getLogger
+from logging import debug, getLogger
 import os
 import sys
 from http import HTTPStatus
@@ -85,10 +85,6 @@ def telemetry(telemetry_post):
     fleet.add_telemetry(telemetry_post)
 
 @socket_io.event
-def event_stream(event):
-    socket_io.emit('event_stream', event)
-
-@socket_io.event
 def send_command(device_id: str, cmd: dict) -> None:
     """Command publisher, send commands to client based on their IDs
 
@@ -98,6 +94,30 @@ def send_command(device_id: str, cmd: dict) -> None:
     """
     log.debug("Sending command: %s", cmd)
     socket_io.emit(f'command_{device_id}', cmd)
+
+socket_connections = []
+
+@socket_io.on('connect')
+def connect():
+    log.info('Device connected, addr: %s, sid: %s', request.remote_addr, request.sid)
+    if 'ignore-me' in request.args and request.args.get('ignore-me') == 'True':
+        log.info('Device ignored')
+        return
+    socket_connections.append(f'{request.remote_addr}:{request.sid}')
+    log.info('Device added to known connections. Connection list: %s', socket_connections)
+
+@socket_io.on('disconnect')
+def disconnect():
+    log.info('Device disconnected, addr: %s, sid: %s', request.remote_addr, request.sid)
+    if 'ignore-me' in request.args and request.args.get('ignore-me') == 'True':
+        log.info('Device ignored')
+        return
+    socket_connections.remove(f'{request.remote_addr}:{request.sid}')
+    log.info('Device removed to known connections. Connection list: %s', socket_connections)
+
+@socket_io.event
+def event_stream(event):
+    socket_io.emit('event_stream', event)
 
 @web_app.route("/command", methods=['POST'])
 def command() -> Response:
@@ -124,12 +144,13 @@ def main():
         sys.exit(1)
 
     global fleet
-    fleet = Fleet(docker_hub,event_stream)
+    fleet = Fleet(docker_hub, socket_connections, event_stream)
 
     socket_io.run(
         web_app,
         host='0.0.0.0',
-        port=5000
+        port=5000,
+        debug=True
     )
 
 if __name__ == '__main__':
