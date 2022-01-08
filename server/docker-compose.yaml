@@ -3,7 +3,7 @@ services:
   fm-server:
     privileged: true
     restart: always
-    image: rikpet/easy-living:fm-server-beta
+    image: rikpet/easy-living:fm-server-stable
     container_name: fm-server
     ports:
       - 5010:5000
