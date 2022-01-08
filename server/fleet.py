@@ -54,6 +54,7 @@ class Fleet():
             return None
         return image_sha != image_id
 
-    def device_online(self, time, interval):
+    @staticmethod
+    def device_online(time, interval):
         last_updated_post = datetime.strptime(time, DATETIME_STANDARD_FORMAT)
         return datetime.now() < last_updated_post + timedelta(seconds=interval*2)

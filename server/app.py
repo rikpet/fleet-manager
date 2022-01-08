@@ -8,7 +8,7 @@ This server also comes with a wasy web app which visualizes the fleet.
 This server also enables some commands for the user, such as update, start and stop.
 """
 
-from logging import debug, getLogger
+from logging import getLogger
 import os
 import sys
 from http import HTTPStatus
@@ -143,14 +143,13 @@ def main():
         log.error('Could not log into Docker hub')
         sys.exit(1)
 
-    global fleet
+    global fleet # pylint: disable=global-statement, invalid-name
     fleet = Fleet(docker_hub, socket_connections, event_stream)
 
     socket_io.run(
         web_app,
         host='0.0.0.0',
-        port=5000,
-        debug=True
+        port=5000
     )
 
 if __name__ == '__main__':
