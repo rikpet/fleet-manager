@@ -149,8 +149,7 @@ def main():
     while True:
         try:
             socket_io.connect(fleet_manager_server_url() +'?ignore-me=True', transports='websocket')
-        except SocketConnectionError as ex:
-            print(str(ex))
+        except SocketConnectionError:
             log.warning('Could not connect to log server')
             time.sleep(PUSH_INTERVAL)
         else:
