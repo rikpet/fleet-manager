@@ -1,6 +1,7 @@
 docker
 requests
 flask
+eventlet
 python-socketio
 python-engineio==4.2.1
 Flask-SocketIO==5.1.1

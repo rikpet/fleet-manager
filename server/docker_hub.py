@@ -62,7 +62,7 @@ class DockerHub(): # pylint: disable=too-many-instance-attributes
         self.cache = {}
         self.cache_time = 60
 
-    def list_images(self) -> list[str]:
+    def list_images(self) -> list:
         """List available images in repository"
 
         Returns:

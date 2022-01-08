@@ -31,7 +31,27 @@ The Docker images is often available in two different version:
 
 The server application can either ran as a python application or inside a docker container. This tutorial will focus on running the application in a docker container on a raspberry pi.
 
-1. Install Docker and docker-compose. Good guide for this can be found [here](https://dev.to/elalemanyo/how-to-install-docker-and-docker-compose-on-raspberry-pi-1mo)
+1. Install docker on the device:
+    ```bash
+    curl -sSL https://get.docker.com | bash
+    ```
+
+2. To remove the need of using ``sudo`` prefix when running docker commands, your current user can be added to the Docker group by running:
+    ```bash
+    sudo usermod -aG docker ${USER}
+    ```
+
+    Check that your user is a part of the group by running:
+    ```bash
+    groups ${USER}
+    ```
+
+3. To install Docker compose we first need to determine which version to use and architecture of the hardware. It is recommended to use the latest version of docker compose. Docker compose versions can be found [here](https://github.com/docker/compose/releases). For architecture, if this is installed on a raspberry pi 3 or 4, use ``armv7``, for raspberry pi zero, use ``armv6``.
+
+    ```bash
+    sudo curl -L "https://github.com/docker/compose/releases/download/v[VERSION]/docker-compose-linux-[ARCHITECTURE]" -o /usr/bin/local/docker-compose
+    sudo chmod +x /usr/bin/local/docker-compose
+    ```
 
 2. Create an account on [Docker hub](https://hub.docker.com/). This is needed for the version control to work.
 
@@ -68,14 +88,14 @@ The server application can either ran as a python application or inside a docker
 
 The client application can either ran as a python application or inside a docker container. This tutorial will focus on running the application in a docker container on a raspberry pi.
 
-First follow step 1 and 2 from the server application tutorial.
+1. Follow steps 1 - 3 from the Server getting started guide above to install Docker and Docker compose.
 
-3. Set environment variables (for raspberry pi, this can be done in ``/etc/environment`` in the form of ``VARIABLE=value``).
+2. Set environment variables (for raspberry pi, this can be done in ``/etc/environment`` in the form of ``VARIABLE=value``).
 
     | Variable | Importance | Description |
     |----------|------------|-------------|
     | PUSH_INTERVAL | Optional | Push interval for telemetry in seconds, defaults to ``60`` |
-    | DEVICE_NAME | Optional | Device name displayed in server UI, defaults to ``John Doe`` |
+    | DEVICE_NAME | Optional | Hardware device name displayed in server UI, defaults to ``John Doe`` |
     | FLEET_MANAGER_SERVER_ADDRESS | Optional | IP address to device running fleet manager server applciation, defaults to ``127.0.0.1`` |
     | FLEET_MANAGER_SERVER_PORT | Optional | Port used by the fleet manager server application, defaults tp ``5010`` |
     | ENABLE_LOG_SERVER | Optional | Enable ``decentralized logger``, defaults to ``False`` |
@@ -83,7 +103,7 @@ First follow step 1 and 2 from the server application tutorial.
     | LOG_SERVER_PORT | Optional | Port for ``decentralized logger``, defaults to ``9020`` |
     | LOG_LEVEL | Optional | Logger level, defaults to ``INFO`` |
 
-4. Start the container. There is a template ``docker-compose.yaml`` in the repository to help create the container. To download the template file run:
+3. Start the container. There is a template ``docker-compose.yaml`` in the repository to help create the container. To download the template file run:
     ```
     curl -sSL https://raw.githubusercontent.com/rikpet/fleet-manager/main/client/docker-compose.yaml -o [FILE_NAME].yaml
     ```
@@ -93,7 +113,7 @@ First follow step 1 and 2 from the server application tutorial.
     docker-compose --file docker-compose.yaml up -d --remove-orphans
     ```
 
-5. The application should now be running now. 
+4. The application should now be running. 
 
 
 To build the docker image run:

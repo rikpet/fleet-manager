@@ -107,13 +107,14 @@ class Device(): # pylint: disable=too-many-instance-attributes
             container_settings = container_client.settings()
             image_name = container_client.image_name
 
+            self.log.debug('Pulling new image from remote repository')
+            self.client.images.pull(image_name)
+
             self.log.debug('Stopping container "%s"', container_name)
             container_client.stop()
             self.log.debug('Removing container "%s"', container_name)
             container_client.remove()
 
-            self.log.debug('Pulling new image from remote repository')
-            self.client.images.pull(image_name)
             self.log.debug('Starting the new image with name "%s"', container_name)
             self._start_new_container(image_name, container_settings)
 

@@ -18,8 +18,9 @@ from decentralized_logger import setup_logging, disable_loggers, level_translato
 
 from device import Device
 
+APPLICATION_NAME = "fleet-manager-client"
+
 # Environment variables
-APPLICATION_NAME = os.getenv("APPLICATION_NAME", "fleet-manager-client")
 PUSH_INTERVAL = int(os.getenv("PUSH_INTERVAL", "60"))
 DEVICE_NAME = os.getenv("DEVICE_NAME", "John Doe")
 FM_SERVER_ADDRESS = os.getenv("FLEET_MANAGER_SERVER_ADDRESS", "127.0.0.1")
@@ -147,7 +148,7 @@ def main():
 
     while True:
         try:
-            socket_io.connect(fleet_manager_server_url())
+            socket_io.connect(fleet_manager_server_url() +'?ignore-me=True', transports='websocket')
         except SocketConnectionError:
             log.warning('Could not connect to log server')
             time.sleep(PUSH_INTERVAL)

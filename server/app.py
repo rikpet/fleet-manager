@@ -13,12 +13,14 @@ import os
 import sys
 from http import HTTPStatus
 from requests import get as http_get
-from flask import Flask, request, render_template, Response
+from flask import Flask, request, render_template, Response, jsonify
 from flask_socketio import SocketIO
 from decentralized_logger import setup_logging, disable_loggers, level_translator
 
 from fleet import Fleet
 from docker_hub import DockerHub
+
+APPLICATION_NAME = "fleet-manager-server"
 
 # Mandatory environment variables
 DOCKER_HUB_USERNAME = os.getenv("DOCKER_HUB_USERNAME")
@@ -35,7 +37,6 @@ if DOCKER_HUB_PASSWORD is None:
 if DOCKER_HUB_REPO is None:
     raise AttributeError('Missing eviroment variable "DOCKER_HUB_REPO"')
 
-APPLICATION_NAME = os.getenv("APPLICATION_NAME", "fleet-manager-server")
 ENABLE_LOG_SERVER = os.getenv("ENABLE_LOG_SERVER", "False").lower() in ("true", "1")
 LOG_SERVER_IP = os.getenv("LOG_SERVER_IP", "127.0.0.1")
 LOG_SERVER_PORT = os.getenv("LOG_SERVER_PORT", "9020")
@@ -67,6 +68,11 @@ def index():
         return "No device registered"
     return render_template("index.html", fleet=fleet.get_fleet_information())
 
+@web_app.route("/fleet", methods=['GET'])
+def fleet():
+    """Endpoint to retrieve data about fleet"""
+    return jsonify(fleet.get_fleet_information())
+
 @web_app.route("/myip")
 def my_ip():
     """Endpoint which returns the clients ip address as recieved by the server"""
@@ -79,10 +85,6 @@ def telemetry(telemetry_post):
     fleet.add_telemetry(telemetry_post)
 
 @socket_io.event
-def event_stream(event):
-    socket_io.emit('event_stream', event)
-
-@socket_io.event
 def send_command(device_id: str, cmd: dict) -> None:
     """Command publisher, send commands to client based on their IDs
 
@@ -92,6 +94,30 @@ def send_command(device_id: str, cmd: dict) -> None:
     """
     log.debug("Sending command: %s", cmd)
     socket_io.emit(f'command_{device_id}', cmd)
+
+socket_connections = []
+
+@socket_io.on('connect')
+def connect():
+    log.info('Device connected, addr: %s, sid: %s', request.remote_addr, request.sid)
+    if 'ignore-me' in request.args and request.args.get('ignore-me') == 'True':
+        log.info('Device ignored')
+        return
+    socket_connections.append(f'{request.remote_addr}:{request.sid}')
+    log.info('Device added to known connections. Connection list: %s', socket_connections)
+
+@socket_io.on('disconnect')
+def disconnect():
+    log.info('Device disconnected, addr: %s, sid: %s', request.remote_addr, request.sid)
+    if 'ignore-me' in request.args and request.args.get('ignore-me') == 'True':
+        log.info('Device ignored')
+        return
+    socket_connections.remove(f'{request.remote_addr}:{request.sid}')
+    log.info('Device removed to known connections. Connection list: %s', socket_connections)
+
+@socket_io.event
+def event_stream(event):
+    socket_io.emit('event_stream', event)
 
 @web_app.route("/command", methods=['POST'])
 def command() -> Response:
@@ -117,8 +143,8 @@ def main():
         log.error('Could not log into Docker hub')
         sys.exit(1)
 
-    global fleet
-    fleet = Fleet(docker_hub,event_stream)
+    global fleet # pylint: disable=global-statement, invalid-name
+    fleet = Fleet(docker_hub, socket_connections, event_stream)
 
     socket_io.run(
         web_app,
