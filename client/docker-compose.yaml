@@ -3,7 +3,7 @@ services:
   fm-client:
     privileged: true
     restart: always
-    image: rikpet/easy-living:fm-client-beta
+    image: rikpet/easy-living:fm-client-stable
     container_name: fm-client
     ports:
       - 5011:5000
