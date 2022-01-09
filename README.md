@@ -31,12 +31,18 @@ The Docker images is often available in two different version:
 
 The server application can either ran as a python application or inside a docker container. This tutorial will focus on running the application in a docker container on a raspberry pi.
 
-1. Install docker on the device:
+1. Make sure the system is up to date:
+    ```bash
+    sudo apt-get update
+    sudo apt-get upgrade
+    ```
+
+2. Install docker on the device:
     ```bash
     curl -sSL https://get.docker.com | bash
     ```
 
-2. To remove the need of using ``sudo`` prefix when running docker commands, your current user can be added to the Docker group by running:
+3. To remove the need of using ``sudo`` prefix when running docker commands, your current user can be added to the Docker group by running:
     ```bash
     sudo usermod -aG docker ${USER}
     ```
@@ -46,16 +52,16 @@ The server application can either ran as a python application or inside a docker
     groups ${USER}
     ```
 
-3. To install Docker compose we first need to determine which version to use and architecture of the hardware. It is recommended to use the latest version of docker compose. Docker compose versions can be found [here](https://github.com/docker/compose/releases). For architecture, if this is installed on a raspberry pi 3 or 4, use ``armv7``, for raspberry pi zero, use ``armv6``.
+4. To install Docker compose we first need to determine which version to use and architecture of the hardware. It is recommended to use the latest version of docker compose. Docker compose versions can be found [here](https://github.com/docker/compose/releases). For architecture, if this is installed on a raspberry pi 3 or 4, use ``armv7``, for raspberry pi zero, use ``armv6``.
 
     ```bash
-    sudo curl -L "https://github.com/docker/compose/releases/download/v[VERSION]/docker-compose-linux-[ARCHITECTURE]" -o /usr/bin/local/docker-compose
-    sudo chmod +x /usr/bin/local/docker-compose
+    sudo curl -L "https://github.com/docker/compose/releases/download/v[VERSION]/docker-compose-linux-[ARCHITECTURE]" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
     ```
 
-2. Create an account on [Docker hub](https://hub.docker.com/). This is needed for the version control to work.
+5. Create an account on [Docker hub](https://hub.docker.com/). This is needed for the version control to work.
 
-3. Set environment variables (for raspberry pi, this can be done in ``/etc/environment`` in the form of ``VARIABLE=value``). Note that required environment variables must be set for the application to start
+6. Set environment variables (for raspberry pi, this can be done in ``/etc/environment`` in the form of ``VARIABLE=value``). Note that required environment variables must be set for the application to start
 
     | Variable | Importance | Description |
     |----------|------------|-------------|
@@ -67,7 +73,7 @@ The server application can either ran as a python application or inside a docker
     | LOG_SERVER_PORT | Optional | Port for ``decentralized logger``, defaults to ``9020`` |
     | LOG_LEVEL | Optional | Logger level, defaults to ``INFO`` |
 
-4. Start the container. There is a template ``docker-compose.yaml`` in the repository to help create the container. To download the template file run:
+7. Start the container. There is a template ``docker-compose.yaml`` in the repository to help create the container. To download the template file run:
     ```
     curl -sSL https://raw.githubusercontent.com/rikpet/fleet-manager/main/server/docker-compose.yaml -o [FILE_NAME].yaml
     ```
@@ -77,7 +83,7 @@ The server application can either ran as a python application or inside a docker
     docker-compose --file docker-compose.yaml up -d --remove-orphans
     ```
 
-5. The application should now be running. Open a web browser on any device in the same network and go to:
+8. The application should now be running. Open a web browser on any device in the same network and go to:
     ```bash
     [ip_to_the_device]:5010
     ```
@@ -88,7 +94,7 @@ The server application can either ran as a python application or inside a docker
 
 The client application can either ran as a python application or inside a docker container. This tutorial will focus on running the application in a docker container on a raspberry pi.
 
-1. Follow steps 1 - 3 from the Server getting started guide above to install Docker and Docker compose.
+1. Follow steps 1 - 4 from the Server getting started guide above to install Docker and Docker compose.
 
 2. Set environment variables (for raspberry pi, this can be done in ``/etc/environment`` in the form of ``VARIABLE=value``).
 
