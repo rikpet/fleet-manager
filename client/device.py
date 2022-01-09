@@ -18,6 +18,7 @@ class Device(): # pylint: disable=too-many-instance-attributes
         self.lock = threading.Lock()
 
         self.log = getLogger(f'{self.__class__.__name__}')
+        self.log.info('Device ID: %s', self.device_id)
 
         self._cached_ip_address = None
         self.containers = []
