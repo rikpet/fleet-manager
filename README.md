@@ -2,7 +2,7 @@
 
 ### ***THIS REPOSITORY IS IN PREVIEW***
 
-This repository is part of a hoppy project to automate every day life. This project is mostly for me to learn new technics and languages, but in the same time building something useful.
+This repository is part of a hobby project to automate every day life. This project is mostly for me to learn new technics and languages, but in the same time building something useful.
 
 Other repositories in this project are:
 
