@@ -73,15 +73,11 @@ def fleet():
     """Endpoint to retrieve data about fleet"""
     return jsonify(fleet.get_fleet_information())
 
-@web_app.route("/myip")
-def my_ip():
-    """Endpoint which returns the clients ip address as recieved by the server"""
-    return request.remote_addr
-
 @socket_io.event
 def telemetry(telemetry_post):
     """Telemetry consumer"""
     log.debug("Telemetry post recieved: %s", telemetry_post)
+    telemetry_post["ip_address"] = request.remote_addr
     fleet.add_telemetry(telemetry_post)
 
 @socket_io.event
@@ -119,9 +115,9 @@ def disconnect():
 def event_stream(event):
     socket_io.emit('event_stream', event)
 
-@web_app.route("/command", methods=['POST'])
-def command() -> Response:
-    """Command entrypoint for user web app
+@web_app.route("/container-command", methods=['POST'])
+def container_command() -> Response:
+    """Command entrypoint for containers from the user web app
 
     Returns:
         Response: HTTP response
@@ -129,6 +125,20 @@ def command() -> Response:
     command_info = request.get_json()
 
     send_command(command_info['id'], command_info)
+    return Response(status=HTTPStatus.ACCEPTED)
+
+@web_app.route("/device-command", methods=['POST'])
+def device_command() -> Response:
+    """Command entrypoint for devices from the user web app
+
+    Returns:
+        Response: HTTP response
+    """
+    command_info = request.get_json()
+
+    if command_info['command'] == 'remove_device':
+        fleet.remove_device(command_info['id'])
+
     return Response(status=HTTPStatus.ACCEPTED)
 
 fleet = None    # pylint: disable=invalid-name

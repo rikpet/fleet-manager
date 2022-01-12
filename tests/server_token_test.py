@@ -1,10 +1,8 @@
 # pylint: skip-file
 
 import pytest
-from http import HTTPStatus
 from datetime import datetime
 from tests.mock.mock_requests_get import MockHttpGet
-from tests.mock.mock_response import MockResponse
 from server.docker_hub import Token
 
 def test_token_can_be_retrieved():

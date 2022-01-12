@@ -15,6 +15,9 @@ class Fleet():
 
         self.event_stream = event_stream
 
+    def remove_device(self, device_id):
+        self._fleet.pop(device_id)
+
     def add_telemetry(self, telemetry):
         telemetry['last_updated'] = datetime.now().strftime(DATETIME_STANDARD_FORMAT)
         self._fleet[telemetry["id"]] = telemetry

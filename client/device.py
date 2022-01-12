@@ -42,7 +42,6 @@ class Device(): # pylint: disable=too-many-instance-attributes
             device_object = {
                 "name": self.device_name,
                 "id": self.device_id,
-                "ip_address": self.ip_address(),
                 "cpu_load": self.cpu_load(),
                 "memory_usage": self.memory_usage(),
                 "containers": []
@@ -52,20 +51,6 @@ class Device(): # pylint: disable=too-many-instance-attributes
                 device_object["containers"].append(container.information())
 
             return device_object
-
-    def ip_address(self) -> str:
-        """Getting device ip by sending a GET ressquest to fm server.
-        IP is cached and is used as backup if server is not responding.
-
-        Returns:
-            str: device ip address
-        """
-        try:
-            response = requests.get(url=f'{self.server_url}/myip')
-            self._cached_ip_address = response.text
-            return self._cached_ip_address
-        except requests.exceptions.RequestException:
-            return self._cached_ip_address
 
     @staticmethod
     def cpu_load(interval: int = 2) -> float:

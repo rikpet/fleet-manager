@@ -3,7 +3,7 @@ from http import HTTPStatus
 from tests.mock.mock_response import MockResponse
 
 class MockHttpGet():
-    """Object to mock :object:`requests.get"""
+    """Object to mock :object:``requests.get``"""
     def __init__(self, respond_unauthorized = False, response = None) -> None:
         self.respond_unauthorized = respond_unauthorized
         self.response = response
