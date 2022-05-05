@@ -38,7 +38,7 @@ jobs:
 
       - name: Build and push application; Fleet manager client 
         id: docker_build_fm_client
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: client
           tags: rikpet/easy-living:fm-client-${{ secrets.DOCKER_TAG }}
@@ -47,7 +47,7 @@ jobs:
 
       - name: Build and push application; Fleet manager server 
         id: docker_build_fm_server
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: server
           tags: rikpet/easy-living:fm-server-${{ secrets.DOCKER_TAG }}
