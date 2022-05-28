@@ -13,7 +13,7 @@ help:
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 build-%: 		## Builds the docker image [% = server/client]
-	docker build --pull --rm --file "$*\Dockerfile" --tag rikpet/easy-living:fm-$*-beta $*
+	docker build --pull --rm --file "$*/Dockerfile" --tag rikpet/easy-living:fm-$*-beta $*
 
 push-%:			## Push docker image to docker hub [% = server/client]. Need to be signed in to Docker hub
 	docker push rikpet/easy-living:fm-$*-beta
