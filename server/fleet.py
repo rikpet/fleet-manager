@@ -1,15 +1,16 @@
 """Module for handling the fleet data"""
 
 from datetime import datetime, timedelta
+from shared import Device
 from docker_hub import DockerHub
 
 DATETIME_STANDARD_FORMAT = "%Y/%m/%d %H:%M:%S"
 
 class Fleet():
-    def __init__(self, docker_hub: DockerHub, socket_connections: list, event_stream: object) -> None:
+    def __init__(self, docker_hub: DockerHub, consumers: list, event_stream: object) -> None:
         self._fleet = {}
         self.docker_hub = docker_hub
-        self.socket_connections = socket_connections
+        self.consumers = consumers
 
         self.docker_hub.list_images()
 
@@ -18,10 +19,13 @@ class Fleet():
     def remove_device(self, device_id):
         self._fleet.pop(device_id)
 
+    def get_device_ip(self, device_id):
+        return self._fleet[device_id].ip_addr
+
     def add_telemetry(self, telemetry):
         telemetry['last_updated'] = datetime.now().strftime(DATETIME_STANDARD_FORMAT)
-        self._fleet[telemetry["id"]] = telemetry
-        if len(self.socket_connections) > 0:
+        self._fleet[telemetry["id"]] = Device(**telemetry)
+        if len(self.consumers) > 0:
             self.event_stream(self.get_fleet_information())
 
     def empty(self) -> bool:

@@ -7,18 +7,25 @@ The client is also capable to handle commands from the server and interacts with
 containers.
 """
 
+from cgitb import text
 from logging import getLogger
 import threading
 from uuid import getnode
+from http import HTTPStatus
 import time
 import os
-import socketio
-from socketio.exceptions import BadNamespaceError, ConnectionError as SocketConnectionError
+from shutil import copyfile
+from flask import Flask, request, Response
+import requests
 from decentralized_logger import setup_logging, disable_loggers, level_translator
 
 from device import Device
+from shared.commands import Command, CommandType
 
 APPLICATION_NAME = "fleet-manager-client"
+
+DEVICE_COMPOSE_FILE = os.path.join("share", "device_compose.yaml")
+BASE_COMPOSE_FILE = "base_compose.yaml"
 
 # Environment variables
 PUSH_INTERVAL = int(os.getenv("PUSH_INTERVAL", "60"))
@@ -49,7 +56,7 @@ setup_logging(
 )
 
 log = getLogger(APPLICATION_NAME) # pylint: disable=invalid-name
-socket_io = socketio.Client() # pylint: disable=invalid-name
+app = Flask(APPLICATION_NAME)
 
 class FleetManagerClient(threading.Thread):
     """Handles telemetry events and sends telemetry to the server based on the push interval.
@@ -100,7 +107,6 @@ fleet_manager = FleetManagerClient(PUSH_INTERVAL)
 device = Device(fleet_manager_server_url(), DEVICE_NAME, DEVICE_ID)
 
 
-@socket_io.event
 def telemetry(telemetry_post):
     """Socket endpoint to handle telemetry flow to the server
 
@@ -108,54 +114,61 @@ def telemetry(telemetry_post):
         telemetry_post (dict): telemetry post to be sent to server
     """
     log.debug('Sending telemetry: %s', telemetry_post)
-    try:
-        socket_io.emit('telemetry', telemetry_post)
-    except BadNamespaceError:
-        log.warning("Could not send telemetry to server at %s", fleet_manager_server_url())
+    response = requests.post(url=fleet_manager_server_url(), json=telemetry_post)
+    if response.status_code is not HTTPStatus.ACCEPTED:
+        log.warning("Could not send telemetry to server at %s. Response code: %s Response message: %s", fleet_manager_server_url(), response.status_code, response.text)
 
-@socket_io.on(f'command_{DEVICE_ID}')
-def command(cmd):
+# TODO: change to case/switch when updating to python 3.10
+@app.route("/command")
+def command():
     """Command endpoint for the client
 
     Args:
         cmd (dict): Command for the client
     """
+    cmd = Command(**request.get_json())
     log.debug('Command received: %s', cmd)
-    command_interpreter(cmd)
+
+    if cmd.type == CommandType.StopContainer:
+        device.stop_container(cmd['container_name'])
+
+    elif cmd.type == CommandType.StartContainer:
+        device.start_container(cmd['container_name'])
+
+    elif cmd.type == CommandType.UpdateDevice:
+        device.update_container(cmd['container_name'])
+
+    elif cmd.type == CommandType.ReadCompose:
+        with open(DEVICE_COMPOSE_FILE, "r") as f:
+            return Response(status=HTTPStatus.OK, text=f.read())
+
+    elif cmd.type == CommandType.WriteCompose:
+        with open(DEVICE_COMPOSE_FILE, "w") as f:
+            f.write(cmd.payload['content'])
+        return Response(status=HTTPStatus.ACCEPTED)
+
     fleet_manager.send_telemetry()
 
-def command_interpreter(command_dict):
-    """Command interpreter. Read incomming command dict and translate it
-    into real actions
+def check_environment():
+    if not os.path.exists(DEVICE_COMPOSE_FILE):
+        copyfile(BASE_COMPOSE_FILE, DEVICE_COMPOSE_FILE)
 
-    Args:
-        command_dict (dict): Command dictionary
-    """
-    if command_dict['command'] == 'stop_container':
-        device.stop_container(command_dict['container_name'])
-    elif command_dict['command'] == 'start_container':
-        device.start_container(command_dict['container_name'])
-    elif command_dict['command'] == 'update_container':
-        device.update_container(command_dict['container_name'])
-    #TODO: Add handling for if the command doesn't exist
+def update_device():
+    pass
 
 def main():
     """Main function"""
     disable_loggers(DISABLE_LOGGERS)
 
+    check_environment()
+
     device.update()
     fleet_manager.start()
 
-    while True:
-        try:
-            socket_io.connect(fleet_manager_server_url() +'?ignore-me=True', transports='websocket')
-        except SocketConnectionError:
-            log.warning('Could not connect to log server')
-            time.sleep(PUSH_INTERVAL)
-        else:
-            log.info('Connected to server')
-            socket_io.wait()
-
+    app.run(
+        host='0.0.0.0',
+        port=5000
+    )
 
 if __name__ == '__main__':
     main()

@@ -6,6 +6,7 @@ import requests
 import psutil
 from container import Container
 import docker
+from shared import Device as DeviceObject
 
 class Device(): # pylint: disable=too-many-instance-attributes
     """Class to handle and bundle device information"""
@@ -39,13 +40,12 @@ class Device(): # pylint: disable=too-many-instance-attributes
             dict: Information about the fleet
         """
         with self.lock:
-            device_object = {
-                "name": self.device_name,
-                "id": self.device_id,
-                "cpu_load": self.cpu_load(),
-                "memory_usage": self.memory_usage(),
-                "containers": []
-            }
+            device_object = DeviceObject(
+                name=self.device_name,
+                id=self.device_id,
+                cpu_load=self.cpu_load(),
+                memory_usage=self.memory_usage(),
+            )
 
             for container in self.containers:
                 device_object["containers"].append(container.information())

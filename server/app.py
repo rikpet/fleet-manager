@@ -12,13 +12,15 @@ from logging import getLogger
 import os
 import sys
 from http import HTTPStatus
-from requests import get as http_get
+from requests import post, get as http_get
 from flask import Flask, request, render_template, Response, jsonify
 from flask_socketio import SocketIO
 from decentralized_logger import setup_logging, disable_loggers, level_translator
 
 from fleet import Fleet
 from docker_hub import DockerHub
+
+from shared.commands import Command
 
 APPLICATION_NAME = "fleet-manager-server"
 
@@ -73,43 +75,40 @@ def fleet():
     """Endpoint to retrieve data about fleet"""
     return jsonify(fleet.get_fleet_information())
 
-@socket_io.event
-def telemetry(telemetry_post):
+@web_app.route("/telemetry-post", methods=["POST"])
+def telemetry():
     """Telemetry consumer"""
+    telemetry_post = request.get_json()
+
     log.debug("Telemetry post recieved: %s", telemetry_post)
     telemetry_post["ip_address"] = request.remote_addr
     fleet.add_telemetry(telemetry_post)
+    return Response(status=HTTPStatus.ACCEPTED)
 
-@socket_io.event
-def send_command(device_id: str, cmd: dict) -> None:
-    """Command publisher, send commands to client based on their IDs
+def send_command(device_id: str, cmd: Command) -> None:
+    """Send commands to the clients
 
     Args:
         device_id (str): Device ID
-        cmd (dict): Command dictionary
+        cmd (Command): Command dictionary
     """
     log.debug("Sending command: %s", cmd)
-    socket_io.emit(f'command_{device_id}', cmd)
+    response = post(url=f'{fleet.get_device_ip(device_id)}/command', json=cmd) 
 
-socket_connections = []
+
+consumers = []
 
 @socket_io.on('connect')
 def connect():
     log.info('Device connected, addr: %s, sid: %s', request.remote_addr, request.sid)
-    if 'ignore-me' in request.args and request.args.get('ignore-me') == 'True':
-        log.info('Device ignored')
-        return
-    socket_connections.append(f'{request.remote_addr}:{request.sid}')
-    log.info('Device added to known connections. Connection list: %s', socket_connections)
+    consumers.append(f'{request.remote_addr}:{request.sid}')
+    log.info('Device added to known connections. Connection list: %s', consumers)
 
 @socket_io.on('disconnect')
 def disconnect():
     log.info('Device disconnected, addr: %s, sid: %s', request.remote_addr, request.sid)
-    if 'ignore-me' in request.args and request.args.get('ignore-me') == 'True':
-        log.info('Device ignored')
-        return
-    socket_connections.remove(f'{request.remote_addr}:{request.sid}')
-    log.info('Device removed to known connections. Connection list: %s', socket_connections)
+    consumers.remove(f'{request.remote_addr}:{request.sid}')
+    log.info('Device removed to known connections. Connection list: %s', consumers)
 
 @socket_io.event
 def event_stream(event):
@@ -154,7 +153,7 @@ def main():
         sys.exit(1)
 
     global fleet # pylint: disable=global-statement, invalid-name
-    fleet = Fleet(docker_hub, socket_connections, event_stream)
+    fleet = Fleet(docker_hub, consumers, event_stream)
 
     socket_io.run(
         web_app,
