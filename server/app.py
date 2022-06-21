@@ -16,29 +16,42 @@ from requests import post, get as http_get
 from flask import Flask, request, render_template, Response, jsonify
 from flask_socketio import SocketIO
 from decentralized_logger import setup_logging, disable_loggers, level_translator
-
-from fleet import Fleet
 from docker_hub import DockerHub
 
-from shared.commands import Command
+# Feature flags
+DEVELOPMENT_MODE = os.getenv("ENV", "").lower() == "development"
 
+if DEVELOPMENT_MODE:
+    parent_path = os.path.dirname(os.getcwd())
+    sys.path.append(parent_path)
+
+from fleet import Fleet                 # pylint: disable=wrong-import-position
+import shared
+from device_information import DeviceInformation
+
+# Constants
 APPLICATION_NAME = "fleet-manager-server"
+APP_PORT = 5000
 
-# Mandatory environment variables
+if DEVELOPMENT_MODE:
+    APP_PORT = 5010
+
+# Mandatory application settings
 DOCKER_HUB_USERNAME = os.getenv("DOCKER_HUB_USERNAME")
 DOCKER_HUB_PASSWORD = os.getenv("DOCKER_HUB_PASSWORD")
 DOCKER_HUB_REPO = os.getenv("DOCKER_HUB_REPO")
 
-# Checking mandatory enviroment
+# Checking application settings
 if DOCKER_HUB_USERNAME is None:
-    raise AttributeError('Missing eviroment variable "DOCKER_HUB_USERNAME"')
+    raise AttributeError('Missing evironment variable "DOCKER_HUB_USERNAME"')
 
 if DOCKER_HUB_PASSWORD is None:
-    raise AttributeError('Missing eviroment variable "DOCKER_HUB_PASSWORD"')
+    raise AttributeError('Missing evironment variable "DOCKER_HUB_PASSWORD"')
 
 if DOCKER_HUB_REPO is None:
-    raise AttributeError('Missing eviroment variable "DOCKER_HUB_REPO"')
+    raise AttributeError('Missing evironment variable "DOCKER_HUB_REPO"')
 
+# Optional application settings
 ENABLE_LOG_SERVER = os.getenv("ENABLE_LOG_SERVER", "False").lower() in ("true", "1")
 LOG_SERVER_IP = os.getenv("LOG_SERVER_IP", "127.0.0.1")
 LOG_SERVER_PORT = os.getenv("LOG_SERVER_PORT", "9020")
@@ -75,17 +88,22 @@ def fleet():
     """Endpoint to retrieve data about fleet"""
     return jsonify(fleet.get_fleet_information())
 
+
 @web_app.route("/telemetry-post", methods=["POST"])
 def telemetry():
     """Telemetry consumer"""
-    telemetry_post = request.get_json()
+    device_telemetry = shared.DeviceTelemetry(**request.get_json())
+    log.debug("Telemetry post recieved: %s", device_telemetry)
 
-    log.debug("Telemetry post recieved: %s", telemetry_post)
-    telemetry_post["ip_address"] = request.remote_addr
-    fleet.add_telemetry(telemetry_post)
+    fleet.add_telemetry(
+        DeviceInformation(
+            telemetry=device_telemetry,
+            ip_addr=request.remote_addr
+        )
+    )
     return Response(status=HTTPStatus.ACCEPTED)
 
-def send_command(device_id: str, cmd: Command) -> None:
+def send_command(device_id: str, cmd: shared.Command) -> None:
     """Send commands to the clients
 
     Args:
@@ -93,7 +111,7 @@ def send_command(device_id: str, cmd: Command) -> None:
         cmd (Command): Command dictionary
     """
     log.debug("Sending command: %s", cmd)
-    response = post(url=f'{fleet.get_device_ip(device_id)}/command', json=cmd) 
+    response = post(url=f'{fleet.get_device_ip(device_id)}/command', json=cmd)
 
 
 consumers = []
@@ -158,7 +176,7 @@ def main():
     socket_io.run(
         web_app,
         host='0.0.0.0',
-        port=5000
+        port=APP_PORT
     )
 
 if __name__ == '__main__':

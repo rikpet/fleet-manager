@@ -1,5 +1,7 @@
 """Module to handle docker container instances"""
 
+from dataclasses import dataclass
+
 class Container():
     """Class that wrap a docker container"""
     def __init__(self, container) -> None:

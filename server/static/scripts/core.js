@@ -19,13 +19,12 @@ $(document).ready(function(){
 
 async function render_ui(event) {
     for (var device_id in event) {
-        await update_device_last_updated(device_id, event[device_id]['last_updated'])
-        await update_device_status(device_id, event[device_id]['online'])
-        await update_device_cpu_load(device_id, event[device_id]['cpu_load'])
-        await update_device_memory_usage(device_id, event[device_id]['memory_usage'])
+        await update_device_last_updated(device_id, event[device_id].telemetry.timestamp)
+       // await update_device_status(device_id, event[device_id]['online'])
+        await update_device_cpu_load(device_id, event[device_id].telemetry.cpu_load)
+        await update_device_memory_usage(device_id, event[device_id].telemetry.memory_usage)
 
-        const containers = Object.values(event[device_id]['containers'])
-
+        const containers = Object.values(event[device_id].telemetry.containers)
         containers.forEach(async container => {
             await update_container_status(container['id'], container['status'])
             await update_container_update_status(container['id'], container['update_available'])
